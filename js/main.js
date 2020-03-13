@@ -106,57 +106,80 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('submit', (event) => {
       let target = event.target;
       event.preventDefault();
-      formWContent = target.closest('.form-content');
-      target.style.display = 'none';
-      statusMessage.innerHTML = '';
-      statusMessage.style.cssText = ` 
-        border: 2px solid #eee;
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        margin: auto;
-        margin-top: 40%;`;
-      formWContent.appendChild(statusMessage);
-      loadIntervalBig = requestAnimationFrame(loadingAnimateBig);
+      const checkBox = target.querySelector('[type=checkbox]');
+      if(checkBox.checked) {
+        const ajaxSettings = (display, margin, idForm) => {
+          target.style.display = display;
+          if(!!idForm) {
+            formWContent = target.closest('.form-content');
+          } else {
+            formWContent = target.closest('.form-wrapper');
+          }
+          statusMessage.innerHTML = '';
+          statusMessage.style.cssText = ` 
+            border: 2px solid #eee;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin: auto;`;
+          statusMessage.style.marginTop = margin;
+          formWContent.appendChild(statusMessage);
+          loadIntervalBig = requestAnimationFrame(loadingAnimateBig);
 
-      const formData = new FormData(target);
-      let body = {};
-      formData.forEach((value, key) => body[key] = value);
-      
-      postData(body)  
-        .then((output) => {
-          if(output.status === 200) {
-            target.style.display = 'none';
-            statusMessage.innerHTML = '<img src="./images/tick.png">';
-            cancelAnimationFrame(loadIntervalBig);
-            cancelAnimationFrame(loadIntervalSmall);
-            statusMessage.style.cssText = `margin-top: 40%;`;
-            setTimeout(() => {
-              statusMessage.innerHTML = '';
-              statusMessage.style.cssText = ``;
-              target.closest('.popup').style.display = 'none';
-            }, 2500);
-          } else throw new Error('Statis network now 200');
+          const formData = new FormData(target);
+          let body = {};
+          formData.forEach((value, key) => body[key] = value);
           
-        })
-        .catch((error) => {
-          target.style.display = 'none';
-          statusMessage.textContent = errorMessege;
-          cancelAnimationFrame(loadIntervalBig);
-          cancelAnimationFrame(loadIntervalSmall);
-          statusMessage.style.cssText = `margin-top: 40%;`;
-          setTimeout(() => {
-            statusMessage.innerHTML = '';
-            target.closest('.popup').style.display = 'none';
-          }, 2500);
-          console.error(error);
-        });
+          postData(body)  
+            .then((output) => {
+              if(output.status === 200) {
+                target.style.display = display;
+                statusMessage.innerHTML = '<img src="./images/tick.png">';
+                cancelAnimationFrame(loadIntervalBig);
+                cancelAnimationFrame(loadIntervalSmall);
+                statusMessage.style.cssText = ``;
+                statusMessage.style.marginTop = margin;
+                setTimeout(() => {
+                  statusMessage.innerHTML = '';
+                  statusMessage.style.cssText = ``;
+                  if(!!idForm) {
+                    target.closest('.popup').style.display = 'none';
+                  }
+                }, 2500);
+              } else throw new Error('Statis network now 200');
+              
+            })
+            .catch((error) => {
+              target.style.display = display;
+              statusMessage.textContent = errorMessege;
+              cancelAnimationFrame(loadIntervalBig);
+              cancelAnimationFrame(loadIntervalSmall);
+              statusMessage.style.cssText = `margin-top: ${margin}; color: #fff;`;
+              setTimeout(() => {
+                statusMessage.innerHTML = '';
+                if(!!idForm) {
+                  target.closest('.popup').style.display = 'none';
+                }
+              }, 2500);
+              console.error(error);
+            });
 
-      for(let i = 0; i < target.elements.length; i++) {
-        if(target.elements[i].tagName === 'INPUT') {
-          target.elements[i].value = '';
+          checkBox.checked = false;
+          for(let i = 0; i < target.elements.length; i++) {
+            if(target.elements[i].tagName === 'INPUT') {
+              target.elements[i].value = '';
+            }
+          }  
+        };
+        if(target.id === 'banner-form') {
+          ajaxSettings('block', '-10px');
+        } else {
+          ajaxSettings('none', '40%', target.id);
         }
-      }  
+
+      } else {
+        alert('Вы не согласны на обработку данных');
+      }
     });
     
     const postData = (body) => {

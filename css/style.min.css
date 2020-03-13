@@ -897,6 +897,36 @@ body {
   -webkit-transition: all 0.3s;
   transition: all 0.3s
 }
+.arrow-block {
+  position: absolute;
+  top: 45%;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 18%;
+  padding-right: 18%;
+}
+.arrow-left {
+  display: block;
+  background-color: #f4c71b;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; 
+  background-image: url(../images/arrow-left.png);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.arrow-right {
+  display: block;
+  background-color: #f4c71b;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; 
+  background-image: url(../images/arrow-right.png);
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
 .btn:hover {
   background-color: #fff
@@ -1538,12 +1568,15 @@ nav.popup-menu .close-menu-btn img {
   padding: 5px 5px 5px 18px;
   margin-right: 5px
 }
-
+#services {
+  position: relative;
+}
 .services-slider {
   display: flex;
   margin: 0 auto;
   padding-left: 15px;
-  padding-right: 15px
+  padding-right: 15px;
+  transition: .2s;
 }
 
 .services-slider .slide {
@@ -1602,11 +1635,20 @@ nav.popup-menu .close-menu-btn img {
 }
 
 #gallery {
-  background-color: #fff
+  background-color: #fff;
+  height: 535px;
 }
 
 #gallery .gallery-bg {
-  background: url(../images/gallery-bg.png) left center no-repeat
+  background: url(../images/gallery-bg.png) left center no-repeat;
+  height: 405px;
+  position: relative;
+}
+
+.slide-active {
+  opacity: 1 !important;
+  -webkit-transition: opacity .5s;
+  transition: opacity .5s;
 }
 
 #gallery .gallery-slider {
@@ -1614,12 +1656,17 @@ nav.popup-menu .close-menu-btn img {
   padding-right: 75px;
   max-width: 900px;
   margin: 0 auto;
-  text-align: center
+  text-align: center;
+  z-index: 0;
 }
 
 #gallery .gallery-slider .slide {
-  margin: 0 auto !important;
-  width: 100%
+  position: absolute;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  -webkit-transition: opacity .5s;
+  transition: opacity .5s;
 }
 
 #gallery .gallery-slider .slider-arrow {

@@ -1,6 +1,191 @@
+class SliderCarousel {
+  constructor({
+      main,
+      wrap,
+      next,
+      prev,
+      position = 0,
+      slidesToShow = 4,
+      infinity = false,
+      responsive = [],
+  }) {
+      if (!main || !wrap) {
+          console.warn('slider-carousel: Необходимо ввести 2 свойства(main, wrap)');
+      }
+      this.main = document.querySelector(main);
+      this.wrap = document.querySelector(wrap);
+      this.next = document.querySelector(next);
+      this.prev = document.querySelector(prev);
+      this.slides = document.querySelector(wrap).children;
+      this.slidesToShow = slidesToShow;
+      this.options = {
+          position,
+          infinity,
+          widthSlide: Math.floor(100 / this.slidesToShow),
+          maxPosition: this.slides.length - this.slidesToShow,
+      };
+      this.responsive = responsive;
+  }
+
+  init() {
+
+      this.addStyle();
+      this.addGloClass();
+
+      if (this.prev && this.next) {
+          this.controlSlider();
+      } else {
+          this.addArrow();
+          this.controlSlider();
+      }
+      if (this.responsive) {
+          this.responsInit();
+      }
+  }
+
+  addGloClass() {
+      this.main.classList.add('glo-slider');
+      this.wrap.classList.add('glo-slider__wrap');
+
+      for (const item of this.slides) {
+          item.classList.add('glo-slider__item');
+      }
+  }
+
+  addStyle() {
+      let style = document.getElementById('sliderCarousel-style');
+      if (!style) {
+          style = document.createElement('style');
+          style.id = 'sliderCarousel-style';
+      }
+
+      style.textContent = `
+        .glo-slider {
+          overflow: hidden  !important;
+        }
+
+        .glo-slider__wrap {
+          display: flex !important;
+          transition: transform 0.5s !important;
+          will-change: transform !important;
+        }
+
+        .glo-slider__item {
+          display: flex !important;
+          align-items: center;
+          flex-direction: column;
+          flex: 0 0 ${this.options.widthSlide}% !important;
+        }
+
+        `;
+      document.head.appendChild(style);
+  }
+
+  controlSlider() {
+      this.prev.addEventListener('click', this.prevSlider.bind(this));
+      this.next.addEventListener('click', this.nextSlider.bind(this));
+  }
+
+  prevSlider() {
+      if (this.options.infinity || this.options.position > 0) {
+          --this.options.position;
+          if (this.options.position < 0) {
+              this.options.position = this.options.maxPosition;
+          }
+          this.wrap.style.transform = `translateX(-${this.options.position * this.options.widthSlide}%)`;
+      }
+  }
+
+  nextSlider() {
+      if (this.options.infinity || this.options.position < this.options.maxPosition) {
+          ++this.options.position;
+
+          if (this.options.position > this.options.maxPosition) {
+              this.options.position = 0;
+          }
+          this.wrap.style.transform = `translateX(-${this.options.position * this.options.widthSlide}%)`;
+      }
+  }
+
+  addArrow() {
+
+      this.prev = document.createElement('button');
+      this.next = document.createElement('button');
+
+      this.prev.className = 'glo-slider__prev';
+      this.next.className = 'glo-slider__next';
+
+      this.main.appendChild(this.prev);
+      this.main.appendChild(this.next);
+
+      const style = document.createElement('style');
+      style.textContent = `
+      .glo-slider__prev,
+      .glo-slider__next {
+          margin: 0 10px;
+          border: 20px solid transparent;
+          background: transparent;
+      }
+      
+      .glo-slider__next{
+          border-left-color: #19b5fe;
+      }
+
+      .glo-slider__prev {
+          border-right-color: #19b5fe;
+      }
+      .glo-slider__prev:hover,
+      .glo-slider__next:hover,
+      .glo-slider__prev:focus,
+      .glo-slider__next:focus {
+          background: transparent;
+          outline: transparent;
+      }
+      `;
+
+      document.head.appendChild(style);
+
+  }
+
+  responsInit() {
+      const slidesToShowDefault = this.slidesToShow,
+          allResponse = this.responsive.map(item => item.breakpoint),
+          maxResponse = Math.max(...allResponse);
+
+      const changeSlide = () => {
+          this.options.widthSlide = Math.floor(100 / this.slidesToShow);
+          this.options.maxPosition = this.slides.length - this.slidesToShow;
+          this.addStyle();
+      };
+
+
+      const checkResponse = () => {
+          const widthWindow = document.documentElement.clientWidth;
+
+          if (widthWindow < maxResponse) {
+              for (let i = 0; i < allResponse.length; i++) {
+                  if (widthWindow < allResponse[i]) {
+                      this.slidesToShow = this.responsive[i].slideToShow;
+                      changeSlide();
+
+                  }
+              }
+          } else {
+              this.slidesToShow = slidesToShowDefault;
+              changeSlide();
+          }
+      };
+
+      checkResponse();
+
+      window.addEventListener('resize', checkResponse);
+
+  }
+} 
 document.addEventListener('DOMContentLoaded', () => {
   'use strict';
   
+  // Drop list
   const getSelectList = () => {
     const clubsList = document.querySelector('.clubs-list'),
           clubsListUl = document.querySelector('.clubs-list ul');    
@@ -17,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   getSelectList();
 
+  // Modal window behavior
   const modalActive = (elem) => {
     let formContent;
     const modalId = document.querySelector(elem);
@@ -34,7 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   };
-
+  
+  // Modal window activation
   const toggleModal = () => {
     const body = document.querySelector('body');
     
@@ -51,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   toggleModal();
 
+  // Submission settings for each form
   const sendForm = () => {
     const errorMessege = `Что-то пошло не так...`,
           statusMessage = document.createElement('div'),
@@ -89,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
         target.value = '+';
       }
     });
-    // Валидация для инпутов
+    // Validate for inputs
     document.body.addEventListener('input', (event) => {
       let target = event.target;
         if(target.placeholder === 'Ваше имя...') {
@@ -195,92 +383,105 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   sendForm();
 
+  // Add dots for sliders
   const getDots = () => {
     const headSlider = document.querySelector('.head-slider'),
-          wrapper = headSlider.querySelector('.wrapper'),
-          slide = headSlider.querySelectorAll('.slide');
-    const div = document.createElement('div');
-    div.classList.add('slider-dots');
-    wrapper.append(div);      
-    slide.forEach((item, index) => {
-      let li = document.createElement('li');
-      if(index === 0) li.classList.add('slick-active');
-      div.append(li); 
-    });
+          gallerySlider = document.querySelector('.gallery-bg');
+
+    const addDots = (elem) => {
+      const div = document.createElement('div'),
+            wrapper = elem.querySelector('.wrapper'),
+            slide = elem.querySelectorAll('.slide');
+      div.classList.add('slider-dots');
+      wrapper.append(div);      
+      slide.forEach((item, index) => {
+        let li = document.createElement('li');
+        if(index === 0) li.classList.add('slick-active');
+        div.append(li); 
+      });
+    };
+    addDots(headSlider);
+    addDots(gallerySlider);
   };
   getDots();
   
+  // Submission settings for each slider
   const getSliders = () => {
     const headSlider = document.querySelector('.head-slider'),
-          wrapper = headSlider.querySelector('.wrapper'),
-          slide = wrapper.querySelectorAll('.slide'),
-          dots = wrapper.querySelectorAll('.slider-dots li');
-    let currentSlider = 0,
-        intervalSlider = 0;
-    
-    const prevSlide = (elem, index, strClass) => {
-      elem[index].classList.remove(strClass);
-    };
-    const nextSlide = (elem, index, strClass) => {
-      elem[index].classList.add(strClass);
-    };
-  
-    const autoplay = () => {
-      prevSlide(slide, currentSlider, 'slide-active');
-      prevSlide(dots, currentSlider, 'slick-active');
-      currentSlider++;
-      if(currentSlider >= slide.length) currentSlider = 0;
-      nextSlide(slide, currentSlider, 'slide-active');
-      nextSlide(dots, currentSlider, 'slick-active');
-    };
-  
-    const startSlide = () => {
-      intervalSlider = setInterval(autoplay, 4000);
-    };
-    const stopSlide = () => {
-      clearInterval(intervalSlider);
-    };
-  
-    wrapper.addEventListener('click', (event) => {
-      event.preventDefault();
-      let target = event.target;
+          gallerySlider = document.querySelector('.gallery-bg');
 
-      if(!target.matches('li')) {
-        return;
-      }
-  
-      prevSlide(slide, currentSlider, 'slide-active');
-      prevSlide(dots, currentSlider, 'slick-active');
-  
-      if(target.matches('#arrow-right')) {
+    const addSlider = (slider) => {
+      const wrapper = slider.querySelector('.wrapper'),
+            slide = wrapper.querySelectorAll('.slide'),
+            dots = wrapper.querySelectorAll('.slider-dots li');    
+      let currentSlider = 0,
+          intervalSlider = 0;
+
+      const prevSlide = (elem, index, strClass) => {
+        elem[index].classList.remove(strClass);
+      };
+      const nextSlide = (elem, index, strClass) => {
+        elem[index].classList.add(strClass);
+      };
+
+      const autoplay = () => {
+        prevSlide(slide, currentSlider, 'slide-active');
+        prevSlide(dots, currentSlider, 'slick-active');
         currentSlider++;
-      } else if(target.matches('#arrow-left')) {
-        currentSlider--;
-      } else if(target.matches('li')) {
-        dots.forEach((item, index) => {
-          if(item === target) currentSlider = index;
-        });
-      }
-  
-      if(currentSlider >= slide.length) currentSlider = 0;
-      if(currentSlider < 0) currentSlider = slide.length -1;
-  
-      nextSlide(slide, currentSlider, 'slide-active');
-      nextSlide(dots, currentSlider, 'slick-active');
-    });
-  
-    wrapper.addEventListener('mouseover', (event) => {
-     if(event.target.matches('li')) {
-        stopSlide();
-     }   
-    });
-    wrapper.addEventListener('mouseout', (event) => {
-     if(event.target.matches('li')) {
-        startSlide();
-     }     
-    });
-  
-    startSlide();
+        if(currentSlider >= slide.length) currentSlider = 0;
+        nextSlide(slide, currentSlider, 'slide-active');
+        nextSlide(dots, currentSlider, 'slick-active');
+      };
+
+      const startSlide = () => {
+        intervalSlider = setInterval(autoplay, 4000);
+      };
+      const stopSlide = () => {
+        clearInterval(intervalSlider);
+      };
+
+      slider.addEventListener('click', (event) => {
+        event.preventDefault();
+        let target = event.target;
+
+        if(!target.matches('li')) return;
+        
+        prevSlide(slide, currentSlider, 'slide-active');
+        prevSlide(dots, currentSlider, 'slick-active');
+
+        if(target.matches('.arrow-right')) {
+          currentSlider++;
+        } else if(target.matches('.arrow-left')) {
+          currentSlider--;
+        } else if(target.matches('li')) {
+          dots.forEach((item, index) => {
+            if(item === target) currentSlider = index;
+          });
+        }
+
+        if(currentSlider >= slide.length) currentSlider = 0;
+        if(currentSlider < 0) currentSlider = slide.length -1;
+
+        nextSlide(slide, currentSlider, 'slide-active');
+        nextSlide(dots, currentSlider, 'slick-active');
+      });
+
+      slider.addEventListener('mouseover', (event) => {
+        if(event.target.matches('li')) {
+          stopSlide();
+        }    
+      });
+      slider.addEventListener('mouseout', (event) => {
+        if(event.target.matches('li')) {
+          startSlide();
+        }     
+      });
+      startSlide();
+    };
+
+    addSlider(headSlider);
+    addSlider(gallerySlider);
+
   };
   getSliders();
 

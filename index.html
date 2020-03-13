@@ -269,13 +269,17 @@
             </div>
         </div>
     </div>
+    <div class="arrow-block">
+        <li class="arrow-left"></li>
+        <li class="arrow-right"></li>
+    </div>
 </section>
 <section id="gallery">
     <h2>Фотогалерея</h2>
     <div class="gallery-bg">
         <div class="wrapper">
             <div class="gallery-slider">
-                <div class="slide">
+                <div class="slide slide-active">
                     <img src="images/gallery/photo1.jpg" alt="">
                 </div>
                 <div class="slide">
@@ -291,6 +295,10 @@
                     <img src="images/gallery/photo5.jpg" alt="">
                 </div>
             </div>
+        </div>
+        <div class="arrow-block">
+            <li class="arrow-left"></li>
+            <li class="arrow-right"></li>
         </div>
     </div>
 </section>
@@ -512,5 +520,26 @@
 
 </div>
 <script src="./js/main.js"></script>
+<script defer>
+  const carousel = new SliderCarousel({
+    main: '#services .wrapper',
+    wrap: '.services-slider',
+    next: '#services .arrow-right',
+    prev: '#services .arrow-left',
+    slidesToShow: 5,
+    infinity: true,
+    responsive: [
+        {
+            breakpoint: 768,
+            slidesToShow: 3
+        },
+        {
+            breakpoint: 575,
+            slidesToShow: 2
+        }
+    ]
+  });
+  carousel.init();  
+</script>
 </body>
 </html>

@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         div.append(li); 
       });
     };
-    addDots(headSlider);
+    if(document.location.pathname === '/index.html') addDots(headSlider);
     addDots(gallerySlider);
   };
   getDots();
@@ -484,14 +484,16 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       startSlide();
     };
-
-    addSlider(headSlider);
+    if(document.location.pathname === '/index.html') addSlider(headSlider);
     addSlider(gallerySlider);
 
   };
   getSliders();
 
   const getCalc = () => {
+    if(document.location.pathname === '/index.html') {
+
+    
     const price = {
       1: 1999,
       6: 9900,
@@ -538,6 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
         countInterval = requestAnimationFrame(countSum);
       }
     });
+  }
 
   };
   getCalc();

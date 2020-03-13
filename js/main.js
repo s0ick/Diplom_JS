@@ -17,26 +17,26 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   getSelectList();
 
+  const modalActive = (elem) => {
+    let formContent;
+    const modalId = document.querySelector(elem);
+    if(elem !== '#gift' && elem !== '#thanks') {
+      formContent = modalId .querySelector('form');
+      formContent.style.display = 'block';
+    }
+    modalId.style.display = 'block';
+    modalId.addEventListener('click', event => {
+      let modalTarget = event.target;
+      if(modalTarget.classList.contains('close_icon') || modalTarget.classList.contains('overlay')) {
+        modalId.style.display = 'none';
+      } else if(modalTarget.classList.contains('close-btn')) {
+        modalId.style.display = 'none';
+      }
+    });
+  };
+
   const toggleModal = () => {
     const body = document.querySelector('body');
-    let formContent;
-
-    const modalActive = (elem) => {
-      const modalId = document.querySelector(elem);
-      if(elem !== '#gift') {
-        formContent = modalId .querySelector('form');
-        formContent.style.display = 'block';
-      }
-      modalId.style.display = 'block';
-      modalId.addEventListener('click', event => {
-        let modalTarget = event.target;
-        if(modalTarget.classList.contains('close_icon') || modalTarget.classList.contains('overlay')) {
-          modalId.style.display = 'none';
-        } else if(modalTarget.classList.contains('close-btn')) {
-          modalId.style.display = 'none';
-        }
-      });
-    };
     
     body.addEventListener('click', event => {
       let target = event.target;
@@ -53,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const sendForm = () => {
     const errorMessege = `Что-то пошло не так...`,
-          statusMessage = document.createElement('div');
+          statusMessage = document.createElement('div'),
+          thanksModal = document.querySelector('#thanks');
   
     let count = 25,
         loadIntervalBig,
@@ -108,23 +109,21 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
       const checkBox = target.querySelector('[type=checkbox]');
       if(checkBox.checked) {
-        const ajaxSettings = (display, margin, idForm) => {
+        const ajaxSettings = (display, idForm) => {
           target.style.display = display;
           if(!!idForm) {
             formWContent = target.closest('.form-content');
-          } else {
-            formWContent = target.closest('.form-wrapper');
+            statusMessage.innerHTML = '';
+            statusMessage.style.cssText = ` 
+              border: 2px solid #eee;
+              width: 35px;
+              height: 35px;
+              border-radius: 50%;
+              margin: auto;
+              margin-top: 40%;`;
+            formWContent.appendChild(statusMessage);
+            loadIntervalBig = requestAnimationFrame(loadingAnimateBig);
           }
-          statusMessage.innerHTML = '';
-          statusMessage.style.cssText = ` 
-            border: 2px solid #eee;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            margin: auto;`;
-          statusMessage.style.marginTop = margin;
-          formWContent.appendChild(statusMessage);
-          loadIntervalBig = requestAnimationFrame(loadingAnimateBig);
 
           const formData = new FormData(target);
           let body = {};
@@ -134,33 +133,35 @@ document.addEventListener('DOMContentLoaded', () => {
             .then((output) => {
               if(output.status === 200) {
                 target.style.display = display;
-                statusMessage.innerHTML = '<img src="./images/tick.png">';
-                cancelAnimationFrame(loadIntervalBig);
-                cancelAnimationFrame(loadIntervalSmall);
-                statusMessage.style.cssText = ``;
-                statusMessage.style.marginTop = margin;
-                setTimeout(() => {
-                  statusMessage.innerHTML = '';
-                  statusMessage.style.cssText = ``;
-                  if(!!idForm) {
+                if(!!idForm) {
+                  statusMessage.innerHTML = '<img src="./images/tick.png">';
+                  cancelAnimationFrame(loadIntervalBig);
+                  cancelAnimationFrame(loadIntervalSmall);
+                  statusMessage.style.cssText = `margin-top: 40%;`;
+                  setTimeout(() => {
+                    statusMessage.innerHTML = '';
+                    statusMessage.style.cssText = ``;
                     target.closest('.popup').style.display = 'none';
-                  }
-                }, 2500);
+                  }, 2500);
+                } else {
+                  thanksModal.style.display = 'block';
+                  modalActive('#thanks');
+                }
               } else throw new Error('Statis network now 200');
               
             })
             .catch((error) => {
               target.style.display = display;
-              statusMessage.textContent = errorMessege;
-              cancelAnimationFrame(loadIntervalBig);
-              cancelAnimationFrame(loadIntervalSmall);
-              statusMessage.style.cssText = `margin-top: ${margin}; color: #fff;`;
-              setTimeout(() => {
-                statusMessage.innerHTML = '';
-                if(!!idForm) {
+              if(!!idForm) {
+                statusMessage.textContent = errorMessege;
+                cancelAnimationFrame(loadIntervalBig);
+                cancelAnimationFrame(loadIntervalSmall);
+                statusMessage.style.cssText = `margin-top: 40%; color: #fff;`;
+                setTimeout(() => {
+                  statusMessage.innerHTML = '';
                   target.closest('.popup').style.display = 'none';
-                }
-              }, 2500);
+                }, 2500);
+              }
               console.error(error);
             });
 
@@ -172,9 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
           }  
         };
         if(target.id === 'banner-form') {
-          ajaxSettings('block', '-10px');
+          ajaxSettings('block');
         } else {
-          ajaxSettings('none', '40%', target.id);
+          ajaxSettings('none', target.id);
         }
 
       } else {

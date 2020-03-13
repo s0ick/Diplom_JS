@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     body.addEventListener('click', event => {
       let target = event.target;
-      if(target.tagName === 'A') event.preventDefault();
+      if(target.href === window.location.href + '#') event.preventDefault();
       if(target.dataset.popup) {
         modalActive(target.dataset.popup);
       } else if (target.closest('div.fixed-gift')) {
@@ -296,7 +296,12 @@ document.addEventListener('DOMContentLoaded', () => {
       let target = event.target;
       event.preventDefault();
       const checkBox = target.querySelector('[type=checkbox]');
-      if(checkBox.checked) {
+      let check = true;
+      if(!!checkBox) {
+        if(checkBox.checked) check = true;
+        else check = false;
+      }
+      if(check) {
         const ajaxSettings = (display, idForm) => {
           target.style.display = display;
           if(!!idForm) {
@@ -353,14 +358,15 @@ document.addEventListener('DOMContentLoaded', () => {
               console.error(error);
             });
 
-          checkBox.checked = false;
+          if(!!checkBox) checkBox.checked = false;
           for(let i = 0; i < target.elements.length; i++) {
             if(target.elements[i].tagName === 'INPUT') {
               target.elements[i].value = '';
             }
           }  
         };
-        if(target.id === 'banner-form') {
+        if(target.id === 'banner-form' || target.id === 'card_order' || 
+          target.id === 'footer_form') {
           ajaxSettings('block');
         } else {
           ajaxSettings('none', target.id);
@@ -484,5 +490,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   };
   getSliders();
+
+  const getCalc = () => {
+    const price = {
+      1: 1999,
+      6: 9900,
+      9: 13900,
+      12: 19900
+    },
+    priceTotal = document.getElementById('price-total'),
+    promoCode = document.querySelector('.price-message input'),
+    inputMonth = document.querySelectorAll('.time input');
+    priceTotal.textContent = price[1];
+
+    let count = 0,
+        countInterval = 0;
+        
+    const countSum = () => {
+      countInterval = requestAnimationFrame(countSum);
+      count++;
+      let total = 0;
+      inputMonth.forEach(item => {
+        if(item.checked) {
+          total = price[item.value];
+          if(promoCode.value === 'ТЕЛО2019') {
+            total = Math.floor(total * 0.7);
+          }
+        }
+      });
+
+      priceTotal.textContent = total;
+      if(count * count <= total ) {
+        priceTotal.textContent = count * count;
+      } else {
+        cancelAnimationFrame(countInterval);
+        count = 0;
+      }
+    };
+
+    inputMonth.forEach(item => {
+      item.addEventListener('change', event => {
+        countInterval = requestAnimationFrame(countSum);
+      });
+    });
+    promoCode.addEventListener('input', () => {
+      if(promoCode.value === 'ТЕЛО2019') {
+        countInterval = requestAnimationFrame(countSum);
+      }
+    });
+
+  };
+  getCalc();
 
 });

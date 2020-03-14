@@ -14,7 +14,7 @@
 <div class="fixed-gift">
     <img src=images/gift.png alt>
 </div>
-<header class="header-main">
+<header class="header-main" id="top">
     <div class="head">
         <div class="wrapper">
             <div class="head-main">
@@ -436,7 +436,7 @@
 
 </footer>
 <div class="wrapper">
-    <a href="#" id="totop"><i class="fa fa-arrow-up" aria-hidden="true"></i>
+    <a href="#top" id="totop"><i class="fa fa-arrow-up" aria-hidden="true"></i>
     </a>
 </div>
 <div class="popup" id="callback_form">
@@ -528,16 +528,6 @@
     prev: '#services .arrow-left',
     slidesToShow: 5,
     infinity: true,
-    responsive: [
-        {
-            breakpoint: 768,
-            slidesToShow: 3
-        },
-        {
-            breakpoint: 575,
-            slidesToShow: 2
-        }
-    ]
   });
   carousel.init();  
 </script>

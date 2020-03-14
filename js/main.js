@@ -63,20 +63,17 @@ class SliderCarousel {
         .glo-slider {
           overflow: hidden  !important;
         }
-
         .glo-slider__wrap {
           display: flex !important;
           transition: transform 0.5s !important;
           will-change: transform !important;
         }
-
         .glo-slider__item {
           display: flex !important;
           align-items: center;
           flex-direction: column;
           flex: 0 0 ${this.options.widthSlide}% !important;
         }
-
         `;
       document.head.appendChild(style);
   }
@@ -92,7 +89,13 @@ class SliderCarousel {
           if (this.options.position < 0) {
               this.options.position = this.options.maxPosition;
           }
-          this.wrap.style.transform = `translateX(-${this.options.position * this.options.widthSlide}%)`;
+          let translate = 0;
+          if(this.options.position * this.options.widthSlide === 0) {
+            this.wrap.style.transform = `translateX(-2.5%)`;
+          }
+          else {
+            this.wrap.style.transform = `translateX(-${(this.options.position * this.options.widthSlide) + 4}%)`;
+          }
       }
   }
 
@@ -103,7 +106,12 @@ class SliderCarousel {
           if (this.options.position > this.options.maxPosition) {
               this.options.position = 0;
           }
-          this.wrap.style.transform = `translateX(-${this.options.position * this.options.widthSlide}%)`;
+          if(this.options.position * this.options.widthSlide === 0) {
+            this.wrap.style.transform = `translateX(-2.5%)`;
+          }
+          else {
+            this.wrap.style.transform = `translateX(-${(this.options.position * this.options.widthSlide) + 4}%)`;
+          }
       }
   }
 
@@ -130,7 +138,6 @@ class SliderCarousel {
       .glo-slider__next{
           border-left-color: #19b5fe;
       }
-
       .glo-slider__prev {
           border-right-color: #19b5fe;
       }
@@ -490,60 +497,121 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   getSliders();
 
+  // Calc init
   const getCalc = () => {
-    console.log(document.location.pathname);
     if(document.location.pathname === '/index.html' || document.location.pathname === '/') {
+      const price = {
+        1: 1999,
+        6: 9900,
+        9: 13900,
+        12: 19900
+      },
+      priceTotal = document.getElementById('price-total'),
+      promoCode = document.querySelector('.price-message input'),
+      inputMonth = document.querySelectorAll('.time input');
+      priceTotal.textContent = price[1];
 
-    
-    const price = {
-      1: 1999,
-      6: 9900,
-      9: 13900,
-      12: 19900
-    },
-    priceTotal = document.getElementById('price-total'),
-    promoCode = document.querySelector('.price-message input'),
-    inputMonth = document.querySelectorAll('.time input');
-    priceTotal.textContent = price[1];
-
-    let count = 0,
-        countInterval = 0;
-        
-    const countSum = () => {
-      countInterval = requestAnimationFrame(countSum);
-      count++;
-      let total = 0;
-      inputMonth.forEach(item => {
-        if(item.checked) {
-          total = price[item.value];
-          if(promoCode.value === 'ТЕЛО2019') {
-            total = Math.floor(total * 0.7);
+      let count = 0,
+          countInterval = 0;
+          
+      const countSum = () => {
+        countInterval = requestAnimationFrame(countSum);
+        count++;
+        let total = 0;
+        inputMonth.forEach(item => {
+          if(item.checked) {
+            total = price[item.value];
+            if(promoCode.value === 'ТЕЛО2019') {
+              total = Math.floor(total * 0.7);
+            }
           }
+        });
+
+        priceTotal.textContent = total;
+        if(count * count <= total ) {
+          priceTotal.textContent = count * count;
+        } else {
+          cancelAnimationFrame(countInterval);
+          count = 0;
+        }
+      };
+
+      inputMonth.forEach(item => {
+        item.addEventListener('change', event => {
+          countInterval = requestAnimationFrame(countSum);
+        });
+      });
+      promoCode.addEventListener('input', () => {
+        if(promoCode.value === 'ТЕЛО2019') {
+          countInterval = requestAnimationFrame(countSum);
         }
       });
-
-      priceTotal.textContent = total;
-      if(count * count <= total ) {
-        priceTotal.textContent = count * count;
-      } else {
-        cancelAnimationFrame(countInterval);
-        count = 0;
-      }
-    };
-
-    inputMonth.forEach(item => {
-      item.addEventListener('change', event => {
-        countInterval = requestAnimationFrame(countSum);
-      });
-    });
-    promoCode.addEventListener('input', () => {
-      if(promoCode.value === 'ТЕЛО2019') {
-        countInterval = requestAnimationFrame(countSum);
-      }
-    });
   }
 
   };
   getCalc();
 
+  // Add smooth scroll and link scroll top
+  const scroll = () => {
+    const totop = document.getElementById('totop');
+    totop.style.opacity = 0;
+    totop.style.transition = '0.2s';
+    window.addEventListener('scroll', () => {
+      if(window.pageYOffset >= 700) totop.style.opacity = 1;
+      else totop.style.opacity = 0;
+    });
+
+    const activeScrolling = (blockID) => {
+      document.querySelector('' + blockID).scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    };
+
+    totop.addEventListener('click', event => {
+      event.preventDefault();
+      const blockID = '#top';
+      activeScrolling(blockID);
+    });
+
+    document.body.addEventListener('click', (event) => {
+      let target = event.target;
+      if(target.tagName === 'A' && target.hash !== '#' && target.hash !== '' ) {
+        event.preventDefault();
+        const blockID = target.getAttribute('href');
+        activeScrolling(blockID);
+      }
+    });
+  };
+  scroll();
+
+  // Menu
+  const toggleMenu = () => {
+    const paretBlock = document.querySelector('.top-menu'),
+          headerMain = document.querySelector('.header-main'),
+          popupMune = document.querySelector('.popup-menu');
+    window.addEventListener('scroll', () => {
+      if(window.pageYOffset >= 190) {
+        paretBlock.style.cssText = `
+          position: fixed;
+          z-index: 100;
+          top: 0`;
+      } else {
+        paretBlock.style.position = 'initial';
+      }
+    });
+    headerMain.addEventListener('click', event => {
+      let target = event.target;
+      if(target.closest('.top-menu')) {
+        popupMune.style.display = 'flex';
+      } else if(target.matches('a')) {
+        popupMune.style.display = 'none';
+      } else if(target.closest('.close-menu-btn')) {
+        popupMune.style.display = 'none';
+      }
+    });
+    
+    
+  };
+  toggleMenu();
 });

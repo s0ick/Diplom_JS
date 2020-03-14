@@ -1577,6 +1577,7 @@ nav.popup-menu .close-menu-btn img {
   padding-left: 15px;
   padding-right: 15px;
   transition: .2s;
+  transform: translateX(-2.5%);
 }
 
 .services-slider .slide {

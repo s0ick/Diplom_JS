@@ -11,7 +11,7 @@
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
 </head>
 <body>
-<header class="header-main">
+<header class="header-main" id="top">
     <div class="head">
         <div class="wrapper">
             <div class="head-main">
@@ -611,16 +611,6 @@
       prev: '#services .arrow-left',
       slidesToShow: 5,
       infinity: true,
-      responsive: [
-          {
-              breakpoint: 768,
-              slidesToShow: 3
-          },
-          {
-              breakpoint: 575,
-              slidesToShow: 2
-          }
-      ]
     });
     carousel.init();  
 </script>

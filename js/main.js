@@ -491,7 +491,8 @@ document.addEventListener('DOMContentLoaded', () => {
   getSliders();
 
   const getCalc = () => {
-    if(document.location.pathname === '/index.html') {
+    console.log(document.location.pathname);
+    if(document.location.pathname === '/index.html' || document.location.pathname === '/') {
 
     
     const price = {

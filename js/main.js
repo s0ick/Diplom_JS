@@ -591,7 +591,7 @@ document.addEventListener('DOMContentLoaded', () => {
           headerMain = document.querySelector('.header-main'),
           popupMune = document.querySelector('.popup-menu');
     window.addEventListener('scroll', () => {
-      if(window.pageYOffset >= 190) {
+      if(window.pageYOffset >= 190 && document.documentElement.clientWidth <= 767) {
         paretBlock.style.cssText = `
           position: fixed;
           z-index: 100;

@@ -23,7 +23,7 @@ const getCalc = () => {
           total = price[item.value];
           if(promoCode.value === 'ТЕЛО2019') {
             total = Math.floor(total * 0.7);
-          }
+          } else total = price[item.value];
         }
       });
 
@@ -41,10 +41,10 @@ const getCalc = () => {
         countInterval = requestAnimationFrame(countSum);
       });
     });
-    promoCode.addEventListener('input', () => {
-      if(promoCode.value === 'ТЕЛО2019') {
+    promoCode.addEventListener('change', () => {
+      //if(promoCode.value === 'ТЕЛО2019') {
         countInterval = requestAnimationFrame(countSum);
-      }
+      //}
     });
 }
 

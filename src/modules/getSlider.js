@@ -70,8 +70,7 @@ const getSliders = () => {
     });
     startSlide();
   };
-  console.log(document.location.pathname);
-  if(document.location.pathname === '/index.html' || document.location.pathname === '/') addSlider(headSlider);
+  addSlider(headSlider);
   addSlider(gallerySlider);
 
 };

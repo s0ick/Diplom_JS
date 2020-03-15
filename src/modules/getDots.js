@@ -14,7 +14,7 @@ const getDots = () => {
       div.append(li); 
     });
   };
-  if(document.location.pathname === '/index.html' || document.location.pathname === '/') addDots(headSlider);
+  addDots(headSlider);
   addDots(gallerySlider);
 };
 export default getDots;

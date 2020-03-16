@@ -2,11 +2,9 @@ const toggleMenu = () => {
   const paretBlock = document.querySelector('.top-menu'),
         headerMain = document.querySelector('.header-main'),
         popupMune = document.querySelector('.popup-menu'),
-        gallery = document.getElementById('gallery'),
         gift = document.querySelector('.fixed-gift');      
   window.addEventListener('scroll', () => {
     if(window.pageYOffset >= 190 && document.documentElement.clientWidth <= 767) {
-      gallery.style.display = 'none';
       paretBlock.style.cssText = `
         position: fixed;
         z-index: 100;
@@ -16,7 +14,6 @@ const toggleMenu = () => {
         gift.style.top = '63px'; 
       }  
     } else {
-      gallery.style.display = 'block';
       paretBlock.style.position = 'initial';
       if(!!gift) {
         gift.style.right = '20px';

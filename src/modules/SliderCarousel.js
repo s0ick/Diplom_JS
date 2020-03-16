@@ -74,6 +74,40 @@ class SliderCarousel {
           flex-direction: column;
           flex: 0 0 ${this.options.widthSlide}% !important;
         }
+        @media (max-width: 1280px) {
+            .glo-slider {
+                width: 890px !important;
+            }
+            .glo-slider__wrap {
+                width: 1085px !important;
+            }
+        }
+        @media (max-width: 992px) {
+            .glo-slider {
+                width: 670px !important;
+            }
+        }
+        @media (max-width: 767px) {
+            .glo-slider {
+                width: 560px !important;
+            }
+            .glo-slider__wrap {
+                width: 900px !important;
+            }
+        }
+        @media (max-width: 567px) {
+            .glo-slider {
+                width: 420px !important;
+            }
+            .glo-slider__wrap {
+                width: 1000px !important;
+            }
+        }
+        @media (max-width: 420px) {
+            .glo-slider {
+                width: 208px !important;
+            }
+        }
         `;
       document.head.appendChild(style);
   }

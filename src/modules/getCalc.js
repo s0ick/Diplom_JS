@@ -1,5 +1,6 @@
 const getCalc = () => {
-  if(document.location.pathname === '/index.html' || document.location.pathname === '/') {
+  const price = document.querySelector('.price');
+  if(!!price) {
     const price = {
       1: 1999,
       6: 9900,
@@ -8,6 +9,7 @@ const getCalc = () => {
     },
     priceTotal = document.getElementById('price-total'),
     promoCode = document.querySelector('.price-message input'),
+    card = document.getElementById('card_order'),
     inputMonth = document.querySelectorAll('.time input');
     priceTotal.textContent = price[1];
 
@@ -21,7 +23,7 @@ const getCalc = () => {
       inputMonth.forEach(item => {
         if(item.checked) {
           total = price[item.value];
-          if(promoCode.value === 'ТЕЛО2019') {
+          if(promoCode.value === 'ТЕЛО2020') {
             total = Math.floor(total * 0.7);
           } else total = price[item.value];
         }
@@ -35,16 +37,11 @@ const getCalc = () => {
         count = 0;
       }
     };
-
-    inputMonth.forEach(item => {
-      item.addEventListener('change', event => {
+    card.addEventListener('change', event => {
+      let target = event.target;
+      if((target.placeholder === 'Промокод' || target.type === 'radio' ) && target.name !== 'club-name') {
         countInterval = requestAnimationFrame(countSum);
-      });
-    });
-    promoCode.addEventListener('change', () => {
-      //if(promoCode.value === 'ТЕЛО2019') {
-        countInterval = requestAnimationFrame(countSum);
-      //}
+      }
     });
 }
 

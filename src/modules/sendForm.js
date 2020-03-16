@@ -55,7 +55,8 @@ const sendForm = () => {
   document.body.addEventListener('submit', (event) => {
     let target = event.target;
     event.preventDefault();
-    const checkBox = target.querySelector('[type=checkbox]');
+    const checkBox = target.querySelector('[type=checkbox]'),
+          radioBox = target.querySelectorAll('[type=radio]');
     let check = true;
     if(!!checkBox) {
       if(checkBox.checked) check = true;
@@ -120,10 +121,10 @@ const sendForm = () => {
 
         if(!!checkBox) checkBox.checked = false;
         for(let i = 0; i < target.elements.length; i++) {
-          if(target.elements[i].tagName === 'INPUT') {
+          if(target.elements[i].type !== 'radio' && target.elements[i].tagName === 'INPUT') {
             target.elements[i].value = '';
           }
-        }  
+        }
       };
       if(target.id === 'banner-form' || target.id === 'card_order' || 
         target.id === 'footer_form') {

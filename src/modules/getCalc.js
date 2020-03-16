@@ -1,17 +1,12 @@
 const getCalc = () => {
   const price = document.querySelector('.price');
   if(!!price) {
-    const price = {
-      1: 1999,
-      6: 9900,
-      9: 13900,
-      12: 19900
-    },
-    priceTotal = document.getElementById('price-total'),
-    promoCode = document.querySelector('.price-message input'),
-    card = document.getElementById('card_order'),
-    inputMonth = document.querySelectorAll('.time input');
-    priceTotal.textContent = price[1];
+    let price = {};
+    const priceTotal = document.getElementById('price-total'),
+          promoCode = document.querySelector('.price-message input'),
+          card = document.getElementById('card_order'),
+          bodyInput = document.getElementById('card_leto_mozaika'),
+          inputMonth = document.querySelectorAll('.time input');
 
     let count = 0,
         countInterval = 0;
@@ -19,6 +14,21 @@ const getCalc = () => {
     const countSum = () => {
       countInterval = requestAnimationFrame(countSum);
       count++;
+      if(bodyInput.checked) {
+        price = {
+          1: 2999,
+          6: 14990,
+          9: 21990,
+          12: 24990
+        };
+      } else {
+        price = {
+          1: 1999,
+          6: 9900,
+          9: 13900,
+          12: 19900
+        };
+      }
       let total = 0;
       inputMonth.forEach(item => {
         if(item.checked) {
@@ -39,7 +49,7 @@ const getCalc = () => {
     };
     card.addEventListener('change', event => {
       let target = event.target;
-      if((target.placeholder === 'Промокод' || target.type === 'radio' ) && target.name !== 'club-name') {
+      if(target.placeholder === 'Промокод' || target.type === 'radio' ) {
         countInterval = requestAnimationFrame(countSum);
       }
     });

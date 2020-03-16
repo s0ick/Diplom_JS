@@ -11,13 +11,17 @@ const toggleMenu = () => {
         position: fixed;
         z-index: 100;
         top: 0`;
-      gift.style.right = '0px';
-      gift.style.top = '63px';   
+      if(!!gift) {
+        gift.style.right = '0px';
+        gift.style.top = '63px'; 
+      }  
     } else {
       gallery.style.display = 'block';
       paretBlock.style.position = 'initial';
-      gift.style.right = '20px';
-      gift.style.top = '15px'; 
+      if(!!gift) {
+        gift.style.right = '20px';
+        gift.style.top = '15px'; 
+      }
     }
   });
   headerMain.addEventListener('click', event => {
